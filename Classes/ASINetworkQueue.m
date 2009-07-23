@@ -232,7 +232,7 @@
 	[self setUploadProgressBytes:[self uploadProgressBytes] - bytes];
 	
 	double progress = ([self uploadProgressBytes]*1.0)/([self uploadProgressTotalBytes]*1.0);
-	[ASIHTTPRequest setProgress:progress forProgressIndicator:[self uploadProgressDelegate]];
+	[ASIHTTPRequest setProgress:nil to:progress forProgressIndicator:[self uploadProgressDelegate]];
 }
 
 
@@ -244,7 +244,7 @@
 	[self setUploadProgressBytes:[self uploadProgressBytes] + bytes];
 	
 	double progress = ([self uploadProgressBytes]*1.0)/([self uploadProgressTotalBytes]*1.0);
-	[ASIHTTPRequest setProgress:progress forProgressIndicator:[self uploadProgressDelegate]];
+	[ASIHTTPRequest setProgress:nil to:progress forProgressIndicator:[self uploadProgressDelegate]];
 
 }
 
@@ -264,7 +264,7 @@
 	}
 	[self setDownloadProgressBytes:[self downloadProgressBytes] + bytes];
 	double progress = ([self downloadProgressBytes]*1.0)/([self downloadProgressTotalBytes]*1.0);
-	[ASIHTTPRequest setProgress:progress forProgressIndicator:[self downloadProgressDelegate]];
+	[ASIHTTPRequest setProgress:nil to:progress forProgressIndicator:[self downloadProgressDelegate]];
 }
 
 // Since this queue takes over as the delegate for all requests it contains, it should forward authorisation requests to its own delegate

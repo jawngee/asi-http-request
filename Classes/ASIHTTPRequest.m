@@ -46,33 +46,33 @@ static NSError *ASITooMuchRedirectionError;
 
 // Private stuff
 @interface ASIHTTPRequest ()
-	@property (retain,setter=setURL:) NSURL *url;
-	@property (assign) BOOL complete;
-	@property (retain) NSDictionary *responseHeaders;
-	@property (retain) NSArray *responseCookies;
-	@property (assign) int responseStatusCode;
-	@property (retain) NSMutableData *rawResponseData;
-	@property (retain, nonatomic) NSDate *lastActivityTime;
-	@property (assign) unsigned long long contentLength;
-	@property (assign) unsigned long long partialDownloadSize;
-	@property (assign, nonatomic) unsigned long long uploadBufferSize;
-	@property (assign) NSStringEncoding responseEncoding;
-	@property (retain, nonatomic) NSOutputStream *postBodyWriteStream;
-	@property (retain, nonatomic) NSInputStream *postBodyReadStream;
-	@property (assign) unsigned long long totalBytesRead;
-	@property (assign) unsigned long long totalBytesSent;
-	@property (assign, nonatomic) unsigned long long lastBytesRead;
-	@property (assign, nonatomic) unsigned long long lastBytesSent;
-	@property (retain) NSLock *cancelledLock;
-	@property (assign, nonatomic) BOOL haveBuiltPostBody;
-	@property (retain, nonatomic) NSOutputStream *fileDownloadOutputStream;
-	@property (assign, nonatomic) int authenticationRetryCount;
-	@property (assign, nonatomic) BOOL updatedProgress;
-	@property (assign, nonatomic) BOOL needsRedirect;
-	@property (assign, nonatomic) int redirectCount;
-	@property (retain, nonatomic) NSData *compressedPostBody;
-	@property (retain, nonatomic) NSString *compressedPostBodyFilePath;
-	@property (retain) NSConditionLock *authenticationLock;
+@property (retain,setter=setURL:) NSURL *url;
+@property (assign) BOOL complete;
+@property (retain) NSDictionary *responseHeaders;
+@property (retain) NSArray *responseCookies;
+@property (assign) int responseStatusCode;
+@property (retain) NSMutableData *rawResponseData;
+@property (retain, nonatomic) NSDate *lastActivityTime;
+@property (assign) unsigned long long contentLength;
+@property (assign) unsigned long long partialDownloadSize;
+@property (assign, nonatomic) unsigned long long uploadBufferSize;
+@property (assign) NSStringEncoding responseEncoding;
+@property (retain, nonatomic) NSOutputStream *postBodyWriteStream;
+@property (retain, nonatomic) NSInputStream *postBodyReadStream;
+@property (assign) unsigned long long totalBytesRead;
+@property (assign) unsigned long long totalBytesSent;
+@property (assign, nonatomic) unsigned long long lastBytesRead;
+@property (assign, nonatomic) unsigned long long lastBytesSent;
+@property (retain) NSLock *cancelledLock;
+@property (assign, nonatomic) BOOL haveBuiltPostBody;
+@property (retain, nonatomic) NSOutputStream *fileDownloadOutputStream;
+@property (assign, nonatomic) int authenticationRetryCount;
+@property (assign, nonatomic) BOOL updatedProgress;
+@property (assign, nonatomic) BOOL needsRedirect;
+@property (assign, nonatomic) int redirectCount;
+@property (retain, nonatomic) NSData *compressedPostBody;
+@property (retain, nonatomic) NSString *compressedPostBodyFilePath;
+@property (retain) NSConditionLock *authenticationLock;
 @end
 
 @implementation ASIHTTPRequest
@@ -90,7 +90,7 @@ static NSError *ASITooMuchRedirectionError;
 		ASIRequestCancelledError = [[NSError errorWithDomain:NetworkRequestErrorDomain code:ASIRequestCancelledErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"The request was cancelled",NSLocalizedDescriptionKey,nil]] retain];
 		ASIUnableToCreateRequestError = [[NSError errorWithDomain:NetworkRequestErrorDomain code:ASIUnableToCreateRequestErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to create request (bad url?)",NSLocalizedDescriptionKey,nil]] retain];
 		ASITooMuchRedirectionError = [[NSError errorWithDomain:NetworkRequestErrorDomain code:ASITooMuchRedirectionErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"The request failed because it redirected too many times",NSLocalizedDescriptionKey,nil]] retain];	
-
+		
 	}
 	[super initialize];
 }
@@ -100,7 +100,7 @@ static NSError *ASITooMuchRedirectionError;
 {
 	self = [super init];
 	[self setRequestMethod:@"GET"];
-
+	
 	[self setShouldRedirect:YES];
 	[self setShowAccurateProgress:YES];
 	[self setShouldResetProgressIndicators:YES];
@@ -187,7 +187,7 @@ static NSError *ASITooMuchRedirectionError;
 			[[self postBodyWriteStream] close];
 			[self setPostBodyWriteStream:nil];
 		}
-
+		
 		if ([self shouldCompressRequestBody]) {
 			[self setCompressedPostBodyFilePath:[NSTemporaryDirectory() stringByAppendingPathComponent:[[NSProcessInfo processInfo] globallyUniqueString]]];
 			[ASIHTTPRequest compressDataFromFile:[self postBodyFilePath] toFile:[self compressedPostBodyFilePath]];
@@ -196,7 +196,7 @@ static NSError *ASITooMuchRedirectionError;
 			[self setPostLength:[[[NSFileManager defaultManager] fileAttributesAtPath:[self postBodyFilePath] traverseLink:NO] fileSize]];
 		}
 		
-	// Otherwise, we have an in-memory request body
+		// Otherwise, we have an in-memory request body
 	} else {
 		if ([self shouldCompressRequestBody]) {
 			[self setCompressedPostBody:[ASIHTTPRequest compressData:[self postBody]]];
@@ -205,7 +205,7 @@ static NSError *ASITooMuchRedirectionError;
 			[self setPostLength:[[self postBody] length]];
 		}
 	}
-		
+	
 	if ([self postLength] > 0) 
 	{
 		if (![requestMethod isEqualToString:@"POST"] && ![requestMethod isEqualToString:@"PUT"]) {
@@ -288,7 +288,7 @@ static NSError *ASITooMuchRedirectionError;
 	[super cancel];
 	[self cancelLoad];
 	[self setComplete:YES];
-
+	
 }
 
 
@@ -415,7 +415,7 @@ static NSError *ASITooMuchRedirectionError;
 	for (header in headers) {
 		CFHTTPMessageSetHeaderFieldValue(request, (CFStringRef)header, (CFStringRef)[requestHeaders objectForKey:header]);
 	}
-
+	
 	// If this is a post/put request and we store the request body in memory, add it to the request
 	if ([self shouldCompressRequestBody] && [self compressedPostBody]) {
 		CFHTTPMessageSetBody(request, (CFDataRef)[self compressedPostBody]);
@@ -474,7 +474,7 @@ static NSError *ASITooMuchRedirectionError;
 		[self failWithError:[NSError errorWithDomain:NetworkRequestErrorDomain code:ASIInternalErrorWhileBuildingRequestType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to create read stream",NSLocalizedDescriptionKey,nil]]];
         return;
     }
-
+	
 	// Tell CFNetwork not to validate SSL certificates
 	if (!validatesSecureCertificate) {
 		CFReadStreamSetProperty(readStream, kCFStreamPropertySSLSettings, [NSMutableDictionary dictionaryWithObject:(NSString *)kCFBooleanFalse forKey:(NSString *)kCFStreamSSLValidatesCertificateChain]); 
@@ -482,16 +482,16 @@ static NSError *ASITooMuchRedirectionError;
 	
 	// Detect proxy settings and apply them
 #if TARGET_OS_IPHONE
-	#if TARGET_IPHONE_SIMULATOR
-		#if __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_2_2
+#if TARGET_IPHONE_SIMULATOR
+#if __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_2_2
 	NSDictionary *proxySettings = [(NSDictionary *)CFNetworkCopySystemProxySettings() autorelease];
-		#else
+#else
 	// Can't detect proxies in 2.2.1 Simulator
 	NSDictionary *proxySettings = [NSMutableDictionary dictionary];	
-		#endif
-	#else
+#endif
+#else
 	NSDictionary *proxySettings = [(NSDictionary *)CFNetworkCopySystemProxySettings() autorelease];
-	#endif
+#endif
 #else
 	NSDictionary *proxySettings = [(NSDictionary *)SCDynamicStoreCopyProxies(NULL) autorelease];
 #endif
@@ -592,7 +592,7 @@ static NSError *ASITooMuchRedirectionError;
 		
 		// Find out how much data we've uploaded so far
 		[self setTotalBytesSent:[[(NSNumber *)CFReadStreamCopyProperty(readStream, kCFStreamPropertyHTTPRequestBytesWrittenCount) autorelease] unsignedLongLongValue]];
-
+		
 		[self updateProgressIndicators];
 		
 		// This thread should wait for 1/4 second for the stream to do something. We'll stop early if it does.
@@ -619,8 +619,8 @@ static NSError *ASITooMuchRedirectionError;
 	
     if (rawResponseData) {
 		[self setRawResponseData:nil];
-	
-	// If we were downloading to a file
+		
+		// If we were downloading to a file
 	} else if (temporaryFileDownloadPath) {
 		[fileDownloadOutputStream close];
 		
@@ -731,7 +731,7 @@ static NSError *ASITooMuchRedirectionError;
 	
 	// Request this request's own upload progress delegate
 	if (uploadProgressDelegate) {
-		[ASIHTTPRequest setProgress:0 forProgressIndicator:uploadProgressDelegate];
+		[ASIHTTPRequest setProgress:self to:0 forProgressIndicator:uploadProgressDelegate];
 	}
 	[progressLock unlock];
 }		
@@ -761,15 +761,15 @@ static NSError *ASITooMuchRedirectionError;
 		}
 	}
 	
-
+	
 	
 	[[self cancelledLock] unlock];
-
+	
 	if (totalBytesSent == 0) {
 		return;
 	}
 	
-		
+	
 	// Update the progress queue, if we have one
 	SEL selector = @selector(incrementUploadProgressBy:);
 	if ([queue respondsToSelector:selector]) {
@@ -793,13 +793,13 @@ static NSError *ASITooMuchRedirectionError;
 		[invocation setArgument:&value atIndex:2];
 		[invocation invoke];
 	}
-
+	
 	// Update this request's own upload progress delegate
 	if (uploadProgressDelegate) {
-		[ASIHTTPRequest setProgress:(double)(1.0*(totalBytesSent-uploadBufferSize)/(postLength-uploadBufferSize)) forProgressIndicator:uploadProgressDelegate];
+		[ASIHTTPRequest setProgress:self to:(double)(1.0*(totalBytesSent-uploadBufferSize)/(postLength-uploadBufferSize)) forProgressIndicator:uploadProgressDelegate];
 		
 	}
-
+	
 }
 
 
@@ -820,7 +820,7 @@ static NSError *ASITooMuchRedirectionError;
 	
 	// Request this request's own download progress delegate
 	if (downloadProgressDelegate) {
-		[ASIHTTPRequest setProgress:0 forProgressIndicator:downloadProgressDelegate];
+		[ASIHTTPRequest setProgress:self to:0 forProgressIndicator:downloadProgressDelegate];
 	}
 	[progressLock unlock];
 }	
@@ -838,7 +838,7 @@ static NSError *ASITooMuchRedirectionError;
 			[self setLastActivityTime:[NSDate date]];
 		}
 		
-
+		
 		// We're using a progress queue or compatible controller to handle progress
 		SEL selector = @selector(incrementDownloadProgressBy:);
 		if ([queue respondsToSelector:@selector(incrementDownloadProgressBy:)]) {
@@ -863,9 +863,9 @@ static NSError *ASITooMuchRedirectionError;
 			
 			[thePool release];
 		}
-			
+		
 		if (downloadProgressDelegate && contentLength > 0)  {
-			[ASIHTTPRequest setProgress:(double)(1.0*bytesReadSoFar/(contentLength+partialDownloadSize)) forProgressIndicator:downloadProgressDelegate];
+			[ASIHTTPRequest setProgress:self to:(double)(1.0*bytesReadSoFar/(contentLength+partialDownloadSize)) forProgressIndicator:downloadProgressDelegate];
 		}
 		
 		[self setLastBytesRead:bytesReadSoFar];
@@ -891,14 +891,14 @@ static NSError *ASITooMuchRedirectionError;
 	}
 	
 	if (uploadProgressDelegate) {
-		[ASIHTTPRequest setProgress:0 forProgressIndicator:uploadProgressDelegate];
+		[ASIHTTPRequest setProgress:self to:0 forProgressIndicator:uploadProgressDelegate];
 	}
 }
 
 
-+ (void)setProgress:(double)progress forProgressIndicator:(id)indicator
++ (void)setProgress:(id)sender to:(double)progress forProgressIndicator:(id)indicator
 {
-
+	
 	SEL selector;
 	[progressLock lock];
 	
@@ -910,12 +910,12 @@ static NSError *ASITooMuchRedirectionError;
 		[invocation setSelector:selector];
 		float progressFloat = (float)progress; // UIProgressView wants a float for the progress parameter
 		[invocation setArgument:&progressFloat atIndex:2];
-
+		
 		// If we're running in the main thread, update the progress straight away. Otherwise, it's not that urgent
 		[invocation performSelectorOnMainThread:@selector(invokeWithTarget:) withObject:indicator waitUntilDone:[NSThread isMainThread]];
-
 		
-	// Cocoa: NSProgressIndicator
+		
+		// Cocoa: NSProgressIndicator
 	} else if ([indicator respondsToSelector:@selector(setDoubleValue:)]) {
 		selector = @selector(setDoubleValue:);
 		NSMethodSignature *signature = [[indicator class] instanceMethodSignatureForSelector:selector];
@@ -923,7 +923,19 @@ static NSError *ASITooMuchRedirectionError;
 		[invocation setSelector:selector];
 		[invocation setArgument:&progress atIndex:2];
 		
-
+		
+		[invocation performSelectorOnMainThread:@selector(invokeWithTarget:) withObject:indicator waitUntilDone:[NSThread isMainThread]];
+		
+		// ProgressController protocol
+	} else if ([indicator respondsToSelector:@selector(updateRequestProgress:to:)]) {
+		selector = @selector(updateRequestProgress:to:);
+		NSMethodSignature *signature = [[indicator class] instanceMethodSignatureForSelector:selector];
+		NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+		[invocation setSelector:selector];
+		[invocation setArgument:&sender atIndex:2];
+		[invocation setArgument:&progress atIndex:3];
+		
+		
 		[invocation performSelectorOnMainThread:@selector(invokeWithTarget:) withObject:indicator waitUntilDone:[NSThread isMainThread]];
 		
 	}
@@ -965,12 +977,12 @@ static NSError *ASITooMuchRedirectionError;
 	if ([self mainRequest]) {
 		ASIHTTPRequest *mRequest = [self mainRequest];
 		[mRequest setError:theError];
-
+		
 		// Let the queue know something went wrong
 		if ([queue respondsToSelector:@selector(requestDidFail:)]) {
 			[queue performSelectorOnMainThread:@selector(requestDidFail:) withObject:mRequest waitUntilDone:[NSThread isMainThread]];		
 		}
-	
+		
 	} else {
 		[self setError:theError];
 		
@@ -1023,17 +1035,17 @@ static NSError *ASITooMuchRedirectionError;
 			NSString *contentType = [[self responseHeaders] objectForKey:@"Content-Type"];
 			NSStringEncoding encoding = [self defaultResponseEncoding];
 			if (contentType) {
-
+				
 				NSString *charsetSeparator = @"charset=";
 				NSScanner *charsetScanner = [NSScanner scannerWithString: contentType];
 				NSString *IANAEncoding = nil;
-
+				
 				if ([charsetScanner scanUpToString: charsetSeparator intoString: NULL] && [charsetScanner scanLocation] < [contentType length])
 				{
 					[charsetScanner setScanLocation: [charsetScanner scanLocation] + [charsetSeparator length]];
 					[charsetScanner scanUpToString: @";" intoString: &IANAEncoding];
 				}
-
+				
 				if (IANAEncoding) {
 					CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef)IANAEncoding);
 					if (cfEncoding != kCFStringEncodingInvalidId) {
@@ -1146,7 +1158,7 @@ static NSError *ASITooMuchRedirectionError;
 			user = [[self mainRequest] username];
 			pass = [[self mainRequest] password];
 			
-		// Let's try to use the ones set in this object
+			// Let's try to use the ones set in this object
 		} else if (username && password) {
 			user = username;
 			pass = password;
@@ -1154,7 +1166,7 @@ static NSError *ASITooMuchRedirectionError;
 		
 	}
 	
-
+	
 	
 	// Ok, that didn't work, let's try the keychain
 	if ((!user || !pass) && useKeychainPersistance) {
@@ -1193,7 +1205,7 @@ static NSError *ASITooMuchRedirectionError;
 		CFRelease(responseHeader);
 		authenticationMethod = (NSString *)CFHTTPAuthenticationCopyMethod(requestAuthentication);
 	}
-
+	
 	
 	if (!requestAuthentication) {
 		[self failWithError:[NSError errorWithDomain:NetworkRequestErrorDomain code:ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to get authentication object from response headers",NSLocalizedDescriptionKey,nil]]];
@@ -1238,19 +1250,19 @@ static NSError *ASITooMuchRedirectionError;
 	[self cancelLoad];
 	
 	if (requestCredentials) {
-
+		
 		if (((authenticationMethod != (NSString *)kCFHTTPAuthenticationSchemeNTLM) || authenticationRetryCount < 2) && [self applyCredentials:requestCredentials]) {
 			[self startRequest];
 			
-		// We've failed NTLM authentication twice, we should assume our credentials are wrong
+			// We've failed NTLM authentication twice, we should assume our credentials are wrong
 		} else if (authenticationMethod == (NSString *)kCFHTTPAuthenticationSchemeNTLM && authenticationRetryCount == 2) {
 			[self failWithError:ASIAuthenticationError];
-	
+			
 		} else {
 			[self failWithError:[NSError errorWithDomain:NetworkRequestErrorDomain code:ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to apply credentials to request",NSLocalizedDescriptionKey,nil]]];
 		}
 		
-	// Are a user name & password needed?
+		// Are a user name & password needed?
 	}  else if (CFHTTPAuthenticationRequiresUserNameAndPassword(requestAuthentication)) {
 		
 		NSMutableDictionary *newCredentials = [self findCredentials];
@@ -1341,7 +1353,7 @@ static NSError *ASITooMuchRedirectionError;
     if (bytesRead < 0) {
         [self handleStreamError];
 		
-	// If zero bytes were read, wait for the EOF to come.
+		// If zero bytes were read, wait for the EOF to come.
     } else if (bytesRead) {
 		
 		[self setTotalBytesRead:[self totalBytesRead]+bytesRead];
@@ -1361,7 +1373,7 @@ static NSError *ASITooMuchRedirectionError;
 			}
 			[fileDownloadOutputStream write:buffer maxLength:bytesRead];
 			
-		//Otherwise, let's add the data to our in-memory store
+			//Otherwise, let's add the data to our in-memory store
 		} else {
 			[rawResponseData appendBytes:buffer length:bytesRead];
 		}
@@ -1411,10 +1423,10 @@ static NSError *ASITooMuchRedirectionError;
 			if (decompressionStatus != Z_OK) {
 				fileError = [NSError errorWithDomain:NetworkRequestErrorDomain code:ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Decompression of %@ failed with code %hi",temporaryFileDownloadPath,decompressionStatus],NSLocalizedDescriptionKey,nil]];
 			}
-				
+			
 			[self removeTemporaryDownloadFile];
 		} else {
-					
+			
 			//Remove any file at the destination path
 			NSError *moveError = nil;
 			if ([[NSFileManager defaultManager] fileExistsAtPath:downloadDestinationPath]) {
@@ -1423,7 +1435,7 @@ static NSError *ASITooMuchRedirectionError;
 					fileError = [NSError errorWithDomain:NetworkRequestErrorDomain code:ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Unable to remove file at path '%@'",downloadDestinationPath],NSLocalizedDescriptionKey,moveError,NSUnderlyingErrorKey,nil]];
 				}
 			}
-					
+			
 			//Move the temporary file to the destination path
 			if (!fileError) {
 				[[NSFileManager defaultManager] moveItemAtPath:temporaryFileDownloadPath toPath:downloadDestinationPath error:&moveError];
@@ -1769,14 +1781,14 @@ static NSError *ASITooMuchRedirectionError;
 	// Get a FILE struct for the source file
 	NSFileHandle *inputFileHandle = [NSFileHandle fileHandleForReadingAtPath:sourcePath];
 	FILE *source = fdopen([inputFileHandle fileDescriptor], "r");
-
+	
 	// Get a FILE struct for the destination path
 	NSFileHandle *outputFileHandle = [NSFileHandle fileHandleForWritingAtPath:destinationPath];
 	FILE *dest = fdopen([outputFileHandle fileDescriptor], "w");
-
+	
 	// compress data in source and save in destination
 	int status = [ASIHTTPRequest compressDataFromSource:source toDestination:dest];
-
+	
 	// Close the files
 	fclose(dest);
 	fclose(source);
@@ -1784,7 +1796,7 @@ static NSError *ASITooMuchRedirectionError;
 	// We have to close both of these explictly because CFReadStreamCreateForStreamedHTTPRequest() seems to go bonkers otherwise
 	[inputFileHandle closeFile];
 	[outputFileHandle closeFile];
-
+	
 	return status;
 }
 

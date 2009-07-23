@@ -13,7 +13,7 @@
 #import <Foundation/Foundation.h>
 // Dammit, importing frameworks when you are targetting two platforms is a PITA
 #if TARGET_OS_IPHONE
-	#import <CFNetwork/CFNetwork.h>
+#import <CFNetwork/CFNetwork.h>
 #endif
 #import <stdio.h>
 
@@ -32,6 +32,11 @@ typedef enum _ASINetworkErrorType {
 } ASINetworkErrorType;
 
 extern NSString* const NetworkRequestErrorDomain;
+
+// Protocol for controller that handled request progress
+@protocol ProgressController
+-(void)updateRequestProgress:(id)sender to:(double)newProgress;
+@end
 
 @interface ASIHTTPRequest : NSOperation {
 	
@@ -244,7 +249,7 @@ extern NSString* const NetworkRequestErrorDomain;
 	
 	// When NO, requests will not check the secure certificate is valid (use for self-signed cerficates during development, DO NOT USE IN PRODUCTION) Default is YES
 	BOOL validatesSecureCertificate;
-
+	
 }
 
 #pragma mark init / dealloc
@@ -309,7 +314,7 @@ extern NSString* const NetworkRequestErrorDomain;
 - (void)removeUploadProgressSoFar;
 
 // Helper method for interacting with progress indicators to abstract the details of different APIS (NSProgressIndicator and UIProgressView)
-+ (void)setProgress:(double)progress forProgressIndicator:(id)indicator;
++ (void)setProgress:(id)sender to:(double)progress forProgressIndicator:(id)indicator;
 
 #pragma mark handling request complete / failure
 
